@@ -26,6 +26,7 @@
 3、在classpath目录下，配置shiro.properties文件,为了防止缺少配置文件，导致权限问题，启动时，如果未配置必填配置，会启动失败.  
 ```    
 app_key=test //应用在UPM中注册的唯一表示，必填
+sso_login_address=*** //SSO登录地址，必填
 sso_recall_address=localhost:80 //SSO登录成功的回调地址，必填
 snapshot_directory=/home/qiso/shiroBackedData/  //权限硬盘的备份地址，选填，有默认值。
 ```  
