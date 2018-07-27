@@ -29,6 +29,6 @@ app_key=test //应用在UPM中注册的唯一表示，必填
 sso_recall_address=localhost:80 //SSO登录成功的回调地址，必填
 snapshot_directory=/home/qiso/shiroBackedData/  //权限硬盘的备份地址，选填，有默认值。
 ```  
-##待完善点
+## 待完善点
 1、目前权限粒度控制的比较大，只控制到了role和url的级别。  
 2、需要自己开发权限管理页面以及提供权限相关接口。  
