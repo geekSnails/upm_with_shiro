@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-lazy-init="true">
+
+    <import resource="classpath*:shiro_http_client.xml"/>
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:shiro.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="shiroBaseConfig" class="com.geek.snails.upm.config.BaseConfig">
+        <constructor-arg name="appkey" value="${app_key}"></constructor-arg>
+        <constructor-arg name="ssoRecallAddress" value="${sso_recall_address}"></constructor-arg>
+        <constructor-arg name="snapshotDirectory" value="${snapshot_directory}"></constructor-arg>
+    </bean>
+
+    <bean id="dataLoaderService" class="com.geek.snails.upm.service.DataLoaderService">
+        <property name="httpClient" ref="shiroHttpClient"></property>
+    </bean>
+
+    <bean id="filterChainGenerateService"
+          class="com.geek.snails.upm.service.FilterChainGenerateService">
+        <property name="baseConfig" ref="shiroBaseConfig"></property>
+        <property name="dataLoaderService" ref="dataLoaderService"></property>
+    </bean>
+
+    <bean id="shiroFilter" class="com.geek.snails.upm.service.InterfaceShiroFilterFactoryBean">
+        <property name="filterChainGenerateService" ref="filterChainGenerateService"></property>
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl"
+                  value="https://${sso_login_address}/cas/login?service=http://${sso_recall_address}/shiro-cas"/>
+        <property name="filters">
+            <util:map>
+                <entry key="casFilter" value-ref="casFilter"/>
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+            <value>
+                /shiro-cas = casFilter
+                /shiro-cas/logout = logout
+            </value>
+        </property>
+    </bean>
+
+    <bean id="casFilter" class="org.apache.shiro.cas.CasFilter"></bean>
+
+    <bean id="casRealm" class="org.apache.shiro.cas.CasRealm">
+        <property name="defaultRoles" value="public"/>
+        <property name="casServerUrlPrefix" value="https://${sso_login_address}/cas/"/>
+        <!-- 客户端的回调地址设置，必须和下面的shiro-cas过滤器拦截的地址一致 -->
+        <property name="casService" value="http://${sso_recall_address}/shiro-cas"/>
+    </bean>
+
+    <bean id="interfaceRealm" class="com.geek.snails.upm.service.InterfaceAuthorizingRealm">
+        <property name="dataLoaderService" ref="dataLoaderService"></property>
+        <property name="baseConfig" ref="shiroBaseConfig"></property>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realms">
+            <list>
+                <ref bean="casRealm"></ref>
+                <ref bean="interfaceRealm"></ref>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="filterChainDefinitionsService"
+          class="com.geek.snails.upm.service.FilterChainAutoReloadService"
+          lazy-init="false" init-method="init">
+        <property name="shiroFilter" ref="shiroFilter"></property>
+        <property name="filterChainGenerateService" ref="filterChainGenerateService"></property>
+    </bean>
+
+    <bean id="lifecycleBeanPostProcessor"
+          class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+</beans>

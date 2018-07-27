@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- shiro HttpClient config begin-->
+    <bean id="shiroRequestConfigBuilder" class="org.apache.http.client.config.RequestConfig"
+          factory-method="custom">
+        <property name="connectionRequestTimeout" value="50"/>
+        <property name="connectTimeout" value="1500"/>
+        <property name="socketTimeout" value="3000"/>
+    </bean>
+
+    <bean id="shiroRequestConfig" depends-on="shiroRequestConfigBuilder"
+          factory-bean="shiroRequestConfigBuilder" factory-method="build"/>
+
+    <bean id="shiroHttpClientBuilder" class="org.apache.http.impl.client.HttpClients"
+          factory-method="custom">
+        <property name="maxConnTotal" value="1000"/>
+        <property name="maxConnPerRoute" value="600"/>
+        <property name="defaultRequestConfig" ref="shiroRequestConfig"/>
+        <property name="userAgent" value="qiso frontend resin"/>
+    </bean>
+
+    <bean id="shiroHttpClient" depends-on="shiroHttpClientBuilder"
+          factory-bean="shiroHttpClientBuilder"
+          factory-method="build" destroy-method="close"/>
+    <!-- shiro HttpClient config end-->
+</beans>
