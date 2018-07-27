@@ -10,15 +10,29 @@ public class BaseConfig {
 
     private String ssoRecallAddress;
 
+    private String ssoLoginAddress;
+
     //todo 设置硬盘备份路径
     private String snapshotDirectory = "/home/qiso/shiroBackedData/";
 
-    public BaseConfig(String appkey, String ssoRecallAddress, String snapshotDirectory) {
-        if (StringUtils.isEmpty(appkey) || StringUtils.isEmpty(snapshotDirectory)) {
-            throw new ConfigBlankException("appkey or ssoRecallAddress can not be null");
+    public BaseConfig(
+            String appkey,
+            String ssoRecallAddress,
+            String ssoLoginAddress,
+            String snapshotDirectory
+    ) {
+        if (StringUtils.isEmpty(appkey)) {
+            throw new ConfigBlankException("appkey can not be null");
+        }
+        if (StringUtils.isEmpty(snapshotDirectory)) {
+            throw new ConfigBlankException("ssoRecallAddress can not be null");
+        }
+        if (StringUtils.isEmpty(ssoLoginAddress)) {
+            throw new ConfigBlankException("ssoLoginAddress can not be null");
         }
         this.appkey = appkey;
         this.ssoRecallAddress = ssoRecallAddress;
+        this.ssoLoginAddress = ssoLoginAddress;
         if (!StringUtils.isEmpty(snapshotDirectory)) {
             this.snapshotDirectory = snapshotDirectory;
         }

@@ -20,6 +20,7 @@
     <bean id="shiroBaseConfig" class="com.geek.snails.upm.config.BaseConfig">
         <constructor-arg name="appkey" value="${app_key}"></constructor-arg>
         <constructor-arg name="ssoRecallAddress" value="${sso_recall_address}"></constructor-arg>
+        <constructor-arg name="ssoLoginAddress" value="${sso_login_address}"></constructor-arg>
         <constructor-arg name="snapshotDirectory" value="${snapshot_directory}"></constructor-arg>
     </bean>
 
