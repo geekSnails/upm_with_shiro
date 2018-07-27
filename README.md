@@ -7,7 +7,7 @@
 本软件授权需要依赖Http接口，需要自己实现统一的权限管理页面并且提供接口，本软件依赖对应的接口来完成授权工作。  
 
 ## 接入步骤
-1、下载本软件，使用maven完成jar包安装，其他项目引入Jar包。
+1、下载本软件，使用maven完成jar包安装，其他项目引入Jar包。  
 2、引入过滤器。 
 ```
 <filter>
@@ -22,9 +22,8 @@
   <filter-name>shiroFilter</filter-name>
   <url-pattern>/*</url-pattern>
 </filter-mapping>
-```
-3、在classpath目录下，配置shiro.properties文件
-  为了防止缺少配置文件，导致权限问题，启动时，如果未配置必填配置，会启动失败
+```  
+3、在classpath目录下，配置shiro.properties文件,为了防止缺少配置文件，导致权限问题，启动时，如果未配置必填配置，会启动失败.  
 ```    
 app_key=test //应用在UPM中注册的唯一表示，必填
 sso_recall_address=localhost:80 //SSO登录成功的回调地址，必填
